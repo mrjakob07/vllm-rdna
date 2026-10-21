@@ -238,7 +238,7 @@ __global__ void qsa_compress_groups_kernel(
         const int tok = (int)(position % COMPRESSOR_STATE_SIZE);
         v = __half2float(
             compressor_state_cache[
-                safe_compressor_block * stride_compressor_state_block
+                (int64_t)safe_compressor_block * stride_compressor_state_block
                 + tok * stride_compressor_state_token
                 + b * stride_compressor_state_dim]);
       }
@@ -268,7 +268,7 @@ __global__ void qsa_compress_groups_kernel(
                           + p * stride_raw_positions_dim];
       } else if (state_first_ok) {
         const int tok = (int)(first_position % COMPRESSOR_STATE_SIZE);
-        v = rope_cache[safe_compressor_block * stride_rope_block
+        v = rope_cache[(int64_t)safe_compressor_block * stride_rope_block
                        + tok * stride_rope_token
                        + p * stride_rope_dim];
       }
@@ -286,15 +286,15 @@ __global__ void qsa_compress_groups_kernel(
     const bool bad = (v0 < 0) || (v0 > 1000000) || (v1 < 0) || (v1 > 1000000)
         || (v2 < 0) || (v2 > 1000000);
     if (bad) {
-      const int64_t r0 = rope_cache[safe_compressor_block * stride_rope_block
+      const int64_t r0 = rope_cache[(int64_t)safe_compressor_block * stride_rope_block
                                     + (int)(first_position % COMPRESSOR_STATE_SIZE)
                                         * stride_rope_token
                                     + 0 * stride_rope_dim];
-      const int64_t r1 = rope_cache[safe_compressor_block * stride_rope_block
+      const int64_t r1 = rope_cache[(int64_t)safe_compressor_block * stride_rope_block
                                     + (int)(first_position % COMPRESSOR_STATE_SIZE)
                                         * stride_rope_token
                                     + 1 * stride_rope_dim];
-      const int64_t r2 = rope_cache[safe_compressor_block * stride_rope_block
+      const int64_t r2 = rope_cache[(int64_t)safe_compressor_block * stride_rope_block
                                     + (int)(first_position % COMPRESSOR_STATE_SIZE)
                                         * stride_rope_token
                                     + 2 * stride_rope_dim];
